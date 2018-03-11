@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head><title>Timer</title>
+	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<style>
-		body {background-color: black;
+		body {
+			background-color: black;
 			color: white;
 			font: 10vh/11vh "Segoe UI", sans-serif;
-			margin: 2% 10%;
+			margin: 5vh auto;
 			height: 90vh;
-			width: 80%;
+			width: 60vw;
 		}
-		#loops > span > :nth-child(2), #timer > :nth-child(2) {
+		.milli {
 			color: wheat;
 			font-size: 60%;
 		}
@@ -17,106 +19,92 @@
 			font-size: larger;
 			line-height: normal;
 		}
-    #total_timer {
-      color: grey;
-    }
+		#total_timer {
+		  color: grey;
+		}
 	</style>
 </head>
 <body>
-	<div id="timer"><span>0:00</span><span>.00</span></div>
+	<div id="timer"><span>0:00</span><span class="milli">.00</span></div>
 	<div id="loops"></div>
 	<div id="total_timer"><span>0:00</span></div>
 	<script>
-    "use strict";
-    document.body.addEventListener("mousedown", onTouch, false);
-    document.body.addEventListener("touchstart", onTouch, false);
-    addEventListener("popstate", popState);
-    Number.prototype.getMilliseconds = function (digits) {
-      return '.' + ('00' + this).substr(-3, digits);
-    };
-    Number.prototype.toHHMMSS = function () {
-      var sec_num = Math.floor(this / 1000);
-      var hours = Math.floor(sec_num / 3600);
-      var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
-      var seconds = sec_num - (hours * 3600) - (minutes * 60);
+		"use strict";
+		document.body.addEventListener("mousedown", onTouch, false);
+		document.body.addEventListener("touchstart", onTouch, false);
+		addEventListener("popstate", popState);
+		Number.prototype.getMilliseconds = function (digits) {
+		  return '.' + ('00' + this).substr(-3, digits);
+		};
+		Number.prototype.toHHMMSS = function () {
+		  var sec_num = Math.floor(this / 1000);
+		  var hours = Math.floor(sec_num / 3600);
+		  var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+		  var seconds = sec_num - (hours * 3600) - (minutes * 60);
 
-      if (minutes < 10 && hours) minutes = "0" + minutes;
-      if (seconds < 10) seconds = "0" + seconds;
-      if (hours) hours = hours + ':'; else hours = '';
-      return hours + minutes + ':' + seconds;
-    };
+		  if (minutes < 10 && hours) minutes = "0" + minutes;
+		  if (seconds < 10) seconds = "0" + seconds;
+		  if (hours) hours = hours + ':'; else hours = '';
+		  return hours + minutes + ':' + seconds;
+		};
 
-    setInterval(updateTimer, 100)
+		setInterval(updateTimer, 100)
 
-    function updateTimer() {
-      update(timer, 1)
-    }
+		function updateTimer() {
+		  update(timer, 1)
+		}
 
-    function popState(e) {
-      document.body.innerHTML = e.state;
-    }
+		function popState(e) {
+		  document.body.innerHTML = e.state;
+		}
 
-    function replaceState() {
-      var stateObj = document.body.innerHTML;
-      history.replaceState(stateObj, "");
-    }
+		function replaceState() {
+		  var stateObj = document.body.innerHTML;
+		  history.replaceState(stateObj, "");
+		}
 
-    function onTouch(e) {
-      e.preventDefault();
-      replaceState();
-      if (timer.dataset.timerBegin) {
-        addLoop();
-      } else {
-        total_timer.dataset.timerBegin = +new Date();
-      }
+		function onTouch(e) {
+		  e.preventDefault();
+		  replaceState();
+		  if (timer.dataset.timerBegin) {
+			addLoop();
+		  } else {
+			total_timer.dataset.timerBegin = +new Date();
+		  }
 
-      timer.dataset.timerBegin = +new Date();
-      history.pushState({}, "");
-      replaceState();
-    }
+		  timer.dataset.timerBegin = +new Date();
+		  history.pushState({}, "");
+		  replaceState();
+		}
 
-    function addLoop() {
-      var newDiv = document.createElement("span");
-      newDiv.innerHTML = timer.innerHTML + "<br>";
-      newDiv.dataset.timerBegin = timer.dataset.timerBegin;
-      update(newDiv, 2);
-      update(total_timer, 0);
+		function addLoop() {
+		  var newDiv = document.createElement("span");
+		  newDiv.innerHTML = timer.innerHTML + "<br>";
+		  newDiv.dataset.timerBegin = timer.dataset.timerBegin;
+		  update(newDiv, 2);
+		  update(total_timer, 0);
 
-      if (loops.firstChild) {
-        loops.insertBefore(newDiv, loops.firstChild);
-      } else {
-        loops.appendChild(newDiv);
-      }
+		  if (loops.firstChild) {
+			loops.insertBefore(newDiv, loops.firstChild);
+		  } else {
+			loops.appendChild(newDiv);
+		  }
 
-      if (loops.children[5]) {
-        loops.removeChild(loops.children[5]);
-      }
-    }
+		  if (loops.children[5]) {
+			loops.removeChild(loops.children[5]);
+		  }
+		}
 
-    function update(node, digits) {
-      if (!node.dataset.timerBegin) {
-        return;
-      }
-      var sec_num = new Date() - node.dataset.timerBegin;
-      node.firstChild.innerHTML = sec_num.toHHMMSS();
-      if (digits) {
-        node.children[1].innerHTML = sec_num.getMilliseconds(digits)
-      }
-    }
-
-    //	var audioCtx = new (window.AudioContext || window.webkitAudioContext || window.audioContext);
-    //	function beep() {
-    //		var oscillator = audioCtx.createOscillator();
-    //		var gainNode = audioCtx.createGain();
-    //
-    //		oscillator.connect(gainNode);
-    //		gainNode.connect(audioCtx.destination);
-    //
-    //		oscillator.start();
-    //		setTimeout(function(){oscillator.stop()}, 100);
-    //	}
-    //
-    //	beep();
+		function update(node, digits) {
+		  if (!node.dataset.timerBegin) {
+			return;
+		  }
+		  var sec_num = new Date() - node.dataset.timerBegin;
+		  node.firstChild.innerHTML = sec_num.toHHMMSS();
+		  if (digits) {
+			node.children[1].innerHTML = sec_num.getMilliseconds(digits)
+		  }
+		}
 	</script>
 </body>
 </html>
