@@ -1,2 +1,2 @@
-# 0o00.ru
+# 0O00.ru
 Simplest Timer
