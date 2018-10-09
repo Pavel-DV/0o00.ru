@@ -33,12 +33,16 @@
 <div id="total_timer"><span>0:00</span></div>
 <script>
   "use strict";
+
+  const maxLoops = 5;
   document.body.addEventListener("mousedown", onTouch, false);
   document.body.addEventListener("touchstart", onTouch, false);
   addEventListener("popstate", popState);
+
   Number.prototype.getMilliseconds = function (digits) {
     return '.' + ('00' + this).substr(-3, digits);
   };
+
   Number.prototype.toHHMMSS = function () {
     const sec_num = Math.floor(this / 1000);
     let hours = Math.floor(sec_num / 3600);
@@ -89,14 +93,10 @@
     update(newDiv, 2);
     update(total_timer, 0);
 
-    if (loops.firstChild) {
-      loops.insertBefore(newDiv, loops.firstChild);
-    } else {
-      loops.appendChild(newDiv);
-    }
+    loops.prepend(newDiv);
 
-    if (loops.children[5]) {
-      loops.removeChild(loops.children[5]);
+    if (loops.children[maxLoops]) {
+      loops.removeChild(loops.children[maxLoops]);
     }
   }
 
