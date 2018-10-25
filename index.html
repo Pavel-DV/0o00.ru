@@ -34,7 +34,7 @@
 <body>
 <div id="timer"><span>0:00</span><span class="milli">.0</span></div>
 <div id="loops"></div>
-<div id="total_sum"><span>0:00</span></div>
+<div id="total_sum"><span>0:00</span><span class="milli">.00</span></div>
 <div id="total_timer"><span>0:00</span><span class="milli">.0</span></div>
 <script>
   "use strict";
@@ -100,7 +100,7 @@
     $newDiv.innerHTML = $timer.innerHTML + "<br>";
     $newDiv.dataset.timerBegin = $timer.dataset.timerBegin;
     update($newDiv, 2);
-    update($totalSum, 0);
+    update($totalSum, 2);
 
     $loops.prepend($newDiv);
 
