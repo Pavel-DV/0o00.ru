@@ -10,6 +10,10 @@
       margin: 5vh auto;
       height: 90vh;
       width: 60vw;
+      padding: 0 5%;
+      border-width: 0 0.1vw;
+      border-color: #4b4b4b;
+      border-style: solid;
     }
 
     .milli {
@@ -22,19 +26,20 @@
       line-height: normal;
     }
 
-    #total_timer {
+    #total_sum {
       color: grey;
     }
   </style>
 </head>
 <body>
-<div id="timer"><span>0:00</span><span class="milli">.00</span></div>
+<div id="timer"><span>0:00</span><span class="milli">.0</span></div>
 <div id="loops"></div>
-<div id="total_timer"><span>0:00</span></div>
+<div id="total_sum"><span>0:00</span></div>
+<div id="total_timer"><span>0:00</span><span class="milli">.0</span></div>
 <script>
   "use strict";
 
-  const maxLoops = 5;
+  const maxLoops = 4;
   document.body.addEventListener("mousedown", onTouch, false);
   document.body.addEventListener("touchstart", onTouch, false);
   addEventListener("popstate", popState);
@@ -55,59 +60,63 @@
     return hours + minutes + ':' + seconds;
   };
 
-  let timer = document.getElementById('timer');
-  let total_timer = document.getElementById('total_timer');
-  let loops = document.getElementById('loops');
+  let $timer = document.getElementById('timer');
+  let $totalSum = document.getElementById('total_sum');
+  let $totalTimer = document.getElementById('total_timer');
+  let $loops = document.getElementById('loops');
 
   setInterval(() => {
-    update(timer, 1)
+    update($timer, 1);
+    update($totalTimer, 1);
   }, 100);
 
   history.replaceState(document.body.innerHTML, '');	//	save initial state
 
   function popState(e) {
     document.body.innerHTML = e.state;
-    timer = document.getElementById('timer');
-    update(timer, 1); //  remove update lag
-    total_timer = document.getElementById('total_timer');
-    loops = document.getElementById('loops');
+    $timer = document.getElementById('timer');
+    update($timer, 1); //  remove update lag
+    $totalSum = document.getElementById('total_sum');
+    $totalTimer = document.getElementById('total_timer');
+    $loops = document.getElementById('loops');
   }
 
   function onTouch(e) {
     e.preventDefault();
 
-    if (timer.dataset.timerBegin) {
+    if ($timer.dataset.timerBegin) {
       addLoop();
     } else {
-      total_timer.dataset.timerBegin = +new Date();
+      $totalSum.dataset.timerBegin = (+new Date()).toString();
+      $totalTimer.dataset.timerBegin = (+new Date()).toString();
     }
 
-    timer.dataset.timerBegin = +new Date();
+    $timer.dataset.timerBegin = (+new Date()).toString();
     history.pushState(document.body.innerHTML, "");
   }
 
   function addLoop() {
-    const newDiv = document.createElement('span');
-    newDiv.innerHTML = timer.innerHTML + "<br>";
-    newDiv.dataset.timerBegin = timer.dataset.timerBegin;
-    update(newDiv, 2);
-    update(total_timer, 0);
+    const $newDiv = document.createElement('span');
+    $newDiv.innerHTML = $timer.innerHTML + "<br>";
+    $newDiv.dataset.timerBegin = $timer.dataset.timerBegin;
+    update($newDiv, 2);
+    update($totalSum, 0);
 
-    loops.prepend(newDiv);
+    $loops.prepend($newDiv);
 
-    if (loops.children[maxLoops]) {
-      loops.removeChild(loops.children[maxLoops]);
+    if ($loops.children[maxLoops]) {
+      $loops.removeChild($loops.children[maxLoops]);
     }
   }
 
-  function update(node, digits) {
-    if (!node.dataset.timerBegin) {
+  function update($node, digits) {
+    if (!$node.dataset.timerBegin) {
       return;
     }
-    const sec_num = new Date() - node.dataset.timerBegin;
-    node.firstChild.innerHTML = sec_num.toHHMMSS();
+    const sec_num = new Date() - $node.dataset.timerBegin;
+    $node.firstChild.innerHTML = sec_num.toHHMMSS();
     if (digits) {
-      node.children[1].innerHTML = sec_num.getMilliseconds(digits)
+      $node.children[1].innerHTML = sec_num.getMilliseconds(digits)
     }
   }
 </script>
