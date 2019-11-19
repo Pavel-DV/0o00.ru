@@ -11,8 +11,7 @@
       background-color: black;
       color: white;
       font-family: Calibri, "Segoe UI", sans-serif;
-      margin: 5vh auto;
-      height: 90vh;
+      margin: 0 auto;
       width: 60vw;
       padding: 0 5%;
     }
@@ -45,7 +44,7 @@
 
     document.body.addEventListener("mousedown", onTouch, {passive: false});
     document.body.addEventListener("touchstart", onTouch, {passive: false});
-    window.addEventListener("resize", onResize, {passive: false});
+    window.addEventListener("resize", onResize);
 
     resize();
 
@@ -57,9 +56,9 @@
     }
 
     function resize() {
-      document.body.style.height = window.innerHeight * .9 + 'px';
-      document.body.style.fontSize = window.innerHeight * .1 + 'px';
-      document.body.style.lineHeight = window.innerHeight * .1 + 'px';
+      document.body.style.height = window.innerHeight + 'px';
+      document.body.style.fontSize = window.innerHeight * .12 + 'px';
+      document.body.style.lineHeight = window.innerHeight * .12 + 'px';
     }
 
     addEventListener("popstate", popState);
@@ -109,7 +108,7 @@
     }
 
     function onTouch(e) {
-      e.preventDefault();
+      e.preventDefault(); //  do not select text
 
       if ($timer.dataset.timerBegin) {
         addLoop();
