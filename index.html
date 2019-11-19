@@ -10,7 +10,7 @@
     body {
       background-color: black;
       color: white;
-      font: 10vh/11vh "Segoe UI", sans-serif;
+      font-family: Calibri, "Segoe UI", sans-serif;
       margin: 5vh auto;
       height: 90vh;
       width: 60vw;
@@ -40,85 +40,113 @@
 <script>
   "use strict";
 
-  const maxLoops = 4;
-  document.body.addEventListener("mousedown", onTouch, {passive: false});
-  document.body.addEventListener("touchstart", onTouch, {passive: false});
-  addEventListener("popstate", popState);
+  (() => {
+    const maxLoops = 4;
 
-  Number.prototype.getMilliseconds = function (digits) {
-    return '.' + ('00' + this).substr(-3, digits);
-  };
+    document.body.addEventListener("mousedown", onTouch, {passive: false});
+    document.body.addEventListener("touchstart", onTouch, {passive: false});
+    window.addEventListener("resize", onResize, {passive: false});
 
-  Number.prototype.toHHMMSS = function () {
-    const sec_num = Math.floor(this / 1000);
-    let hours = Math.floor(sec_num / 3600);
-    let minutes = Math.floor((sec_num - (hours * 3600)) / 60);
-    let seconds = sec_num - (hours * 3600) - (minutes * 60);
+    resize();
 
-    if (minutes < 10 && hours) minutes = "0" + minutes;
-    if (seconds < 10) seconds = "0" + seconds;
-    hours = hours ? hours + ':' : '';
-    return hours + minutes + ':' + seconds;
-  };
+    function onResize() {
+      resize();
 
-  const $timer = document.getElementById('timer');
-  const $totalSum = document.getElementById('total_sum');
-  const $totalTimer = document.getElementById('total_timer');
-  const $loops = document.getElementById('loops');
-
-  function animation() {
-    update($timer, 1);
-    update($totalTimer, 1);
-    requestAnimationFrame(animation);
-  }
-
-  animation();
-
-  history.replaceState(document.body.innerHTML, '');	//	save initial state
-
-  function popState(e) {
-    document.body.innerHTML = e.state;
-    update($timer, 1); //  remove update lag
-  }
-
-  function onTouch(e) {
-    e.preventDefault();
-
-    if ($timer.dataset.timerBegin) {
-      addLoop();
-    } else {
-      $totalSum.dataset.timerBegin = (+new Date()).toString();
-      $totalTimer.dataset.timerBegin = (+new Date()).toString();
+      // Additional timeOut for iPhone Plus in landscape with multiple tabs opened
+      setTimeout(resize, 400);
     }
 
-    $timer.dataset.timerBegin = (+new Date()).toString();
-    history.pushState(document.body.innerHTML, "");
-  }
-
-  function addLoop() {
-    const $newDiv = document.createElement('span');
-    $newDiv.innerHTML = $timer.innerHTML + "<br>";
-    $newDiv.dataset.timerBegin = $timer.dataset.timerBegin;
-    update($newDiv, 2);
-    update($totalSum, 2);
-
-    $loops.prepend($newDiv);
-
-    if ($loops.children[maxLoops]) {
-      $loops.removeChild($loops.children[maxLoops]);
+    function resize() {
+      document.body.style.height = window.innerHeight * .9 + 'px';
+      document.body.style.fontSize = window.innerHeight * .1 + 'px';
+      document.body.style.lineHeight = window.innerHeight * .1 + 'px';
     }
-  }
 
-  function update($node, digits) {
-    if (!$node.dataset.timerBegin) {
-      return;
+    addEventListener("popstate", popState);
+
+    Number.prototype.getMilliseconds = function (digits) {
+      return '.' + ('00' + this).substr(-3, digits);
+    };
+
+    Number.prototype.toHHMMSS = function () {
+      const secondsTotal = Math.floor(this / 1000);
+      const hours = Math.floor(secondsTotal / 3600);
+      const minutes = Math.floor((secondsTotal - (hours * 3600)) / 60);
+      const seconds = secondsTotal - (hours * 3600) - (minutes * 60);
+
+      const hoursShow = hours || '';
+      const hoursSeparator = hours ? ':' : '';
+      const minutesShow = (minutes < 10 && hours) ? `0${minutes}` : minutes;
+      const secondsShow = (seconds < 10) ? `0${seconds}` : seconds;
+      return `${hoursShow}${hoursSeparator}${minutesShow}:${secondsShow}`;
+    };
+
+    let $timer, $totalSum, $totalTimer, $loops;
+
+    initVariables();
+
+    function initVariables() {
+      $timer = document.getElementById('timer');
+      $totalSum = document.getElementById('total_sum');
+      $totalTimer = document.getElementById('total_timer');
+      $loops = document.getElementById('loops');
     }
-    const sec_num = new Date() - $node.dataset.timerBegin;
-    $node.firstChild.innerHTML = sec_num.toHHMMSS();
-    if (digits) {
-      $node.children[1].innerHTML = sec_num.getMilliseconds(digits)
+
+    function animation() {
+      update($timer, 1);
+      update($totalTimer, 1);
+      requestAnimationFrame(animation);
     }
-  }
+
+    animation();
+
+    history.replaceState(document.body.innerHTML, '');	//	save initial state
+
+    function popState(e) {
+      document.body.innerHTML = e.state;
+      initVariables();
+      update($timer, 1); //  remove update lag
+    }
+
+    function onTouch(e) {
+      e.preventDefault();
+
+      if ($timer.dataset.timerBegin) {
+        addLoop();
+      } else {
+        $totalSum.dataset.timerBegin = (+new Date()).toString();
+        $totalTimer.dataset.timerBegin = (+new Date()).toString();
+      }
+
+      $timer.dataset.timerBegin = (+new Date()).toString();
+      history.pushState(document.body.innerHTML, "");
+    }
+
+    function addLoop() {
+      const $newDiv = document.createElement('span');
+      $newDiv.innerHTML = $timer.innerHTML + "<br>";
+      $newDiv.dataset.timerBegin = $timer.dataset.timerBegin;
+      update($newDiv, 2);
+      update($totalSum, 2);
+
+      $loops.prepend($newDiv);
+
+      if ($loops.children[maxLoops]) {
+        $loops.removeChild($loops.children[maxLoops]);
+      }
+    }
+
+    function update($node, digits) {
+      if (!$node.dataset.timerBegin) {
+        return;
+      }
+      const millisecondsPassed = new Date() - $node.dataset.timerBegin;
+      $node.firstChild.innerHTML = millisecondsPassed.toHHMMSS();
+      if (digits) {
+        $node.children[1].innerHTML = millisecondsPassed.getMilliseconds(digits)
+      }
+    }
+  })();
 </script>
 </body>
 </html>
