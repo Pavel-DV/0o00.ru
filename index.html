@@ -3,6 +3,10 @@
 <head><title>Timer</title>
   <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
   <style>
+    html {
+      background-color: #161616;
+    }
+
     body {
       background-color: black;
       color: white;
@@ -11,9 +15,6 @@
       height: 90vh;
       width: 60vw;
       padding: 0 5%;
-      border-width: 0 0.1vw;
-      border-color: #4b4b4b;
-      border-style: solid;
     }
 
     .milli {
@@ -40,8 +41,8 @@
   "use strict";
 
   const maxLoops = 4;
-  document.body.addEventListener("mousedown", onTouch, false);
-  document.body.addEventListener("touchstart", onTouch, false);
+  document.body.addEventListener("mousedown", onTouch, {passive: false});
+  document.body.addEventListener("touchstart", onTouch, {passive: false});
   addEventListener("popstate", popState);
 
   Number.prototype.getMilliseconds = function (digits) {
@@ -60,25 +61,24 @@
     return hours + minutes + ':' + seconds;
   };
 
-  let $timer = document.getElementById('timer');
-  let $totalSum = document.getElementById('total_sum');
-  let $totalTimer = document.getElementById('total_timer');
-  let $loops = document.getElementById('loops');
+  const $timer = document.getElementById('timer');
+  const $totalSum = document.getElementById('total_sum');
+  const $totalTimer = document.getElementById('total_timer');
+  const $loops = document.getElementById('loops');
 
-  setInterval(() => {
+  function animation() {
     update($timer, 1);
     update($totalTimer, 1);
-  }, 100);
+    requestAnimationFrame(animation);
+  }
+
+  animation();
 
   history.replaceState(document.body.innerHTML, '');	//	save initial state
 
   function popState(e) {
     document.body.innerHTML = e.state;
-    $timer = document.getElementById('timer');
     update($timer, 1); //  remove update lag
-    $totalSum = document.getElementById('total_sum');
-    $totalTimer = document.getElementById('total_timer');
-    $loops = document.getElementById('loops');
   }
 
   function onTouch(e) {
