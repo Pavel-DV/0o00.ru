@@ -7,11 +7,12 @@
   <link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
   <style>
     html {
-      background-color: #171717;
+      background-color: black;
+      /*background-color: #171717;*/
     }
 
     body {
-      background-color: black;
+      /*background-color: black;*/
       color: white;
       font-family: Calibri, "Segoe UI", sans-serif;
       margin: 0 auto;
@@ -48,14 +49,14 @@
     let isSwiping = false;
     let isTouching = false;
 
-    document.body.addEventListener("mousedown", onTouchStart, {passive: false});
-    document.body.addEventListener("touchstart", onTouchStart, {passive: false});
+    document.addEventListener("mousedown", onTouchStart, {passive: false});
+    document.addEventListener("touchstart", onTouchStart, {passive: false});
 
-    document.body.addEventListener("mousemove", onSwipe, {passive: false});
-    document.body.addEventListener("touchmove", onSwipe, {passive: false});
+    document.addEventListener("mousemove", onSwipe, {passive: false});
+    document.addEventListener("touchmove", onSwipe, {passive: false});
 
-    document.body.addEventListener("click", onTouch, {passive: false});
-    document.body.addEventListener("touchend", onTouch, {passive: false});
+    document.addEventListener("click", onTouch, {passive: false});
+    document.addEventListener("touchend", onTouch, {passive: false});
 
     window.addEventListener("resize", onResize);
 
@@ -131,12 +132,12 @@
     }
 
     function onSwipe(e) {
-      e.preventDefault(); //  do not select text
+      // e.preventDefault(); //  do not select text
       isSwiping = true;
     }
 
     function onTouch(e) {
-      e.preventDefault(); //  do not select text
+      // e.preventDefault(); //  do not select text
       isTouching = false;
 
       if (isSwiping) {
