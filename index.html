@@ -44,9 +44,19 @@
 
   (() => {
     const maxLoops = 4;
+    let touchTimeGlobal;
+    let isSwiping = false;
+    let isTouching = false;
 
-    document.body.addEventListener("mousedown", onTouch, {passive: false});
-    document.body.addEventListener("touchstart", onTouch, {passive: false});
+    document.body.addEventListener("mousedown", onTouchStart, {passive: false});
+    document.body.addEventListener("touchstart", onTouchStart, {passive: false});
+
+    document.body.addEventListener("mousemove", onSwipe, {passive: false});
+    document.body.addEventListener("touchmove", onSwipe, {passive: false});
+
+    document.body.addEventListener("click", onTouch, {passive: false});
+    document.body.addEventListener("touchend", onTouch, {passive: false});
+
     window.addEventListener("resize", onResize);
 
     resize();
@@ -95,8 +105,11 @@
     }
 
     function animation() {
-      update($timer, 1);
-      update($totalTimer, 1);
+      if (!isTouching) {
+        update($timer, 1);
+        update($totalTimer, 1);
+      }
+
       requestAnimationFrame(animation);
     }
 
@@ -110,25 +123,45 @@
       update($timer, 1); //  remove update lag
     }
 
+    function onTouchStart(e) {
+      e.preventDefault(); //  do not select text
+      isSwiping = false;
+      isTouching = true;
+      touchTimeGlobal = new Date().getTime();
+    }
+
+    function onSwipe(e) {
+      e.preventDefault(); //  do not select text
+      isSwiping = true;
+    }
+
     function onTouch(e) {
       e.preventDefault(); //  do not select text
+      isTouching = false;
 
-      if ($timer.dataset.timerBegin) {
-        addLoop();
-      } else {
-        $totalSum.dataset.timerBegin = (+new Date()).toString();
-        $totalTimer.dataset.timerBegin = (+new Date()).toString();
+      if (isSwiping) {
+        isSwiping = false;
+        return
       }
 
-      $timer.dataset.timerBegin = (+new Date()).toString();
+      const timerBegin = touchTimeGlobal.toString();
+
+      if ($timer.dataset.timerBegin) {
+        addLoop(touchTimeGlobal);
+      } else {
+        $totalSum.dataset.timerBegin = timerBegin;
+        $totalTimer.dataset.timerBegin = timerBegin;
+      }
+
+      $timer.dataset.timerBegin = timerBegin;
       history.pushState(document.body.innerHTML, "");
     }
 
-    function addLoop() {
+    function addLoop(touchTime) {
       const $newDiv = document.createElement('span');
       $newDiv.innerHTML = $timer.innerHTML + "<br>";
       $newDiv.dataset.timerBegin = $timer.dataset.timerBegin;
-      update($newDiv, 2);
+      update($newDiv, 2, touchTime);
       update($totalSum, 2);
 
       $loops.prepend($newDiv);
@@ -138,11 +171,14 @@
       }
     }
 
-    function update($node, digits) {
+    function update($node, digits, time = null) {
       if (!$node.dataset.timerBegin) {
         return;
       }
-      const millisecondsPassed = new Date() - $node.dataset.timerBegin;
+
+      const endTime = time ?? new Date().getTime();
+
+      const millisecondsPassed = endTime - $node.dataset.timerBegin;
       $node.firstChild.innerHTML = millisecondsPassed.toHHMMSS();
       if (digits) {
         $node.children[1].innerHTML = millisecondsPassed.getMilliseconds(digits)
