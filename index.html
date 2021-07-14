@@ -52,7 +52,7 @@
 
     document.addEventListener("touchstart", onTouchStart, {passive: true /* not call preventDefault */});
     document.addEventListener("touchmove", onSwipe, {passive: false});
-    document.addEventListener("touchend", onTouch, {passive: true /* not call preventDefault */});
+    document.addEventListener("touchend", onTouchEnd, {passive: true /* not call preventDefault */});
     window.addEventListener("resize", onResize);
 
     resize();
@@ -96,7 +96,7 @@
       $totalSum = document.getElementById('total_sum');
       $totalTimer = document.getElementById('total_timer');
       $loops = document.getElementById('loops');
-      isSwipingGlob = false;
+      isSwipingGlob = true; //  For prevent addLoop after popState
       isTouchingGlob = false;
     }
 
@@ -131,7 +131,7 @@
       isSwipingGlob = true;
     }
 
-    function onTouch() {
+    function onTouchEnd() {
       isTouchingGlob = false;
 
       if (isSwipingGlob) {
