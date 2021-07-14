@@ -49,15 +49,9 @@
     let isSwiping = false;
     let isTouching = false;
 
-    document.addEventListener("mousedown", onTouchStart, {passive: false});
-    document.addEventListener("touchstart", onTouchStart, {passive: false});
-
-    document.addEventListener("mousemove", onSwipe, {passive: false});
+    document.addEventListener("touchstart", onTouchStart, {passive: true /* not call preventDefault */});
     document.addEventListener("touchmove", onSwipe, {passive: false});
-
-    document.addEventListener("click", onTouch, {passive: false});
-    document.addEventListener("touchend", onTouch, {passive: false});
-
+    document.addEventListener("touchend", onTouch, {passive: true /* not call preventDefault */});
     window.addEventListener("resize", onResize);
 
     resize();
@@ -132,12 +126,11 @@
     }
 
     function onSwipe(e) {
-      e.preventDefault(); //  do not select text
+      e.preventDefault(); //  do not scroll
       isSwiping = true;
     }
 
-    function onTouch(e) {
-      // e.preventDefault(); //  do not select text
+    function onTouch() {
       isTouching = false;
 
       if (isSwiping) {
@@ -145,16 +138,14 @@
         return
       }
 
-      const timerBegin = touchTimeGlobal.toString();
-
       if ($timer.dataset.timerBegin) {
         addLoop(touchTimeGlobal);
       } else {
-        $totalSum.dataset.timerBegin = timerBegin;
-        $totalTimer.dataset.timerBegin = timerBegin;
+        $totalSum.dataset.timerBegin = touchTimeGlobal;
+        $totalTimer.dataset.timerBegin = touchTimeGlobal;
       }
 
-      $timer.dataset.timerBegin = timerBegin;
+      $timer.dataset.timerBegin = touchTimeGlobal;
       history.pushState(document.body.innerHTML, "");
     }
 
