@@ -45,9 +45,10 @@
 
   (() => {
     const maxLoops = 4;
-    let touchTimeGlobal;
-    let isSwiping = false;
-    let isTouching = false;
+    let touchTimeGlob;
+    let isSwipingGlob;
+    let isTouchingGlob;
+    let $timer, $totalSum, $totalTimer, $loops;
 
     document.addEventListener("touchstart", onTouchStart, {passive: true /* not call preventDefault */});
     document.addEventListener("touchmove", onSwipe, {passive: false});
@@ -88,8 +89,6 @@
       return `${hoursShow}${hoursSeparator}${minutesShow}:${secondsShow}`;
     };
 
-    let $timer, $totalSum, $totalTimer, $loops;
-
     initVariables();
 
     function initVariables() {
@@ -97,10 +96,12 @@
       $totalSum = document.getElementById('total_sum');
       $totalTimer = document.getElementById('total_timer');
       $loops = document.getElementById('loops');
+      isSwipingGlob = false;
+      isTouchingGlob = false;
     }
 
     function animation() {
-      if (!isTouching) {
+      if (!isTouchingGlob) {
         update($timer, 1);
         update($totalTimer, 1);
       }
@@ -120,32 +121,32 @@
 
     function onTouchStart(e) {
       // e.preventDefault(); //  do not select text
-      isSwiping = false;
-      isTouching = true;
-      touchTimeGlobal = new Date().getTime();
+      isSwipingGlob = false;
+      isTouchingGlob = true;
+      touchTimeGlob = new Date().getTime();
     }
 
     function onSwipe(e) {
       e.preventDefault(); //  do not scroll
-      isSwiping = true;
+      isSwipingGlob = true;
     }
 
     function onTouch() {
-      isTouching = false;
+      isTouchingGlob = false;
 
-      if (isSwiping) {
-        isSwiping = false;
+      if (isSwipingGlob) {
+        isSwipingGlob = false;
         return
       }
 
       if ($timer.dataset.timerBegin) {
-        addLoop(touchTimeGlobal);
+        addLoop(touchTimeGlob);
       } else {
-        $totalSum.dataset.timerBegin = touchTimeGlobal;
-        $totalTimer.dataset.timerBegin = touchTimeGlobal;
+        $totalSum.dataset.timerBegin = touchTimeGlob;
+        $totalTimer.dataset.timerBegin = touchTimeGlob;
       }
 
-      $timer.dataset.timerBegin = touchTimeGlobal;
+      $timer.dataset.timerBegin = touchTimeGlob;
       history.pushState(document.body.innerHTML, "");
     }
 
