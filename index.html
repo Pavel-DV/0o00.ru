@@ -50,12 +50,26 @@
     let isTouchingGlob;
     let $timer, $totalSum, $totalTimer, $loops;
 
-    document.addEventListener("touchstart", onTouchStart, {passive: true /* not call preventDefault */});
-    document.addEventListener("touchmove", onSwipe, {passive: false});
-    document.addEventListener("touchend", onTouchEnd, {passive: true /* not call preventDefault */});
-    window.addEventListener("resize", onResize);
+    document.addEventListener('touchstart', onTouchStart, {passive: true /* not call preventDefault */});
+    document.addEventListener('touchmove', onSwipe, {passive: false});
+    document.addEventListener('touchend', onTouchEnd, {passive: true /* not call preventDefault */});
+    window.addEventListener('blur', onBlur);
+    window.addEventListener('resize', onResize);
+    window.addEventListener('popstate', popState);
 
     resize();
+    initVariables();
+    animation();
+    history.replaceState(document.body.innerHTML, '');	//	save initial state
+
+    function initVariables() {
+      $timer = document.getElementById('timer');
+      $totalSum = document.getElementById('total_sum');
+      $totalTimer = document.getElementById('total_timer');
+      $loops = document.getElementById('loops');
+      isSwipingGlob = true; //  For prevent addLoop after popState
+      isTouchingGlob = false;
+    }
 
     function onResize() {
       resize();
@@ -70,14 +84,12 @@
       document.body.style.lineHeight = window.innerHeight * .12 + 'px';
     }
 
-    addEventListener("popstate", popState);
+    function getFraction(milliseconds, digitsCount) {
+      return '.' + ('00' + milliseconds).substr(-3, digitsCount);
+    }
 
-    Number.prototype.getMilliseconds = function (digits) {
-      return '.' + ('00' + this).substr(-3, digits);
-    };
-
-    Number.prototype.toHHMMSS = function () {
-      const secondsTotal = Math.floor(this / 1000);
+    function toHHMMSS(milliseconds) {
+      const secondsTotal = Math.floor(milliseconds / 1000);
       const hours = Math.floor(secondsTotal / 3600);
       const minutes = Math.floor((secondsTotal - (hours * 3600)) / 60);
       const seconds = secondsTotal - (hours * 3600) - (minutes * 60);
@@ -87,17 +99,6 @@
       const minutesShow = (minutes < 10 && hours) ? `0${minutes}` : minutes;
       const secondsShow = (seconds < 10) ? `0${seconds}` : seconds;
       return `${hoursShow}${hoursSeparator}${minutesShow}:${secondsShow}`;
-    };
-
-    initVariables();
-
-    function initVariables() {
-      $timer = document.getElementById('timer');
-      $totalSum = document.getElementById('total_sum');
-      $totalTimer = document.getElementById('total_timer');
-      $loops = document.getElementById('loops');
-      isSwipingGlob = true; //  For prevent addLoop after popState
-      isTouchingGlob = false;
     }
 
     function animation() {
@@ -109,14 +110,15 @@
       requestAnimationFrame(animation);
     }
 
-    animation();
-
-    history.replaceState(document.body.innerHTML, '');	//	save initial state
-
     function popState(e) {
       document.body.innerHTML = e.state;
       initVariables();
       update($timer, 1); //  remove update lag
+    }
+
+    function onBlur() {
+      isSwipingGlob = false;
+      isTouchingGlob = false;
     }
 
     function onTouchStart(e) {
@@ -172,9 +174,9 @@
       const endTime = time ?? new Date().getTime();
 
       const millisecondsPassed = endTime - $node.dataset.timerBegin;
-      $node.firstChild.innerHTML = millisecondsPassed.toHHMMSS();
+      $node.firstChild.innerHTML = toHHMMSS(millisecondsPassed);
       if (digits) {
-        $node.children[1].innerHTML = millisecondsPassed.getMilliseconds(digits)
+        $node.children[1].innerHTML = getFraction(millisecondsPassed, digits);
       }
     }
   })();
