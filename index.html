@@ -44,7 +44,6 @@
   (() => {
     const maxLoops = 4;
     let touchTimeGlob;
-    let isSwipingGlob;
     let isTouchingGlob;
     let $timer, $totalSum, $totalTimer, $loops;
 
@@ -52,15 +51,8 @@
     document.addEventListener('touchmove', onSwipe, {passive: false});
     document.addEventListener('touchend', onTouchEnd, {passive: true /* not call preventDefault */});
     window.addEventListener('blur', onBlur);
-    window.addEventListener('focus', ()=>on('focus'));
-    window.addEventListener('visibilitychange', ()=>on('vis'));
-    window.addEventListener('pageshow', ()=>on('pag'));
     window.addEventListener('resize', onResize);
     window.addEventListener('popstate', popState);
-
-    function on(text) {
-      document.body.innerHTML = text + '<br>' + document.body.innerHTML;
-    }
 
     resize();
     initVariables();
@@ -72,7 +64,6 @@
       $totalSum = document.getElementById('total_sum');
       $totalTimer = document.getElementById('total_timer');
       $loops = document.getElementById('loops');
-      isSwipingGlob = true; //  For prevent addLoop after popState
       isTouchingGlob = false;
     }
 
@@ -122,33 +113,26 @@
     }
 
     function onBlur() {
-      on('blu');
-      isSwipingGlob = false;
       isTouchingGlob = false;
     }
 
     function onTouchStart(e) {
-      on('ts');
       // e.preventDefault(); //  do not select text
-      isSwipingGlob = false;
       isTouchingGlob = true;
       touchTimeGlob = new Date().getTime();
     }
 
     function onSwipe(e) {
-      on('sw');
       e.preventDefault(); //  do not scroll
-      isSwipingGlob = true;
+      isTouchingGlob = false;
     }
 
     function onTouchEnd() {
-      on('te');
-      isTouchingGlob = false;
-
-      if (isSwipingGlob) {
-        isSwipingGlob = false;
+      if (!isTouchingGlob) {
         return
       }
+
+      isTouchingGlob = false;
 
       if ($timer.dataset.timerBegin) {
         addLoop(touchTimeGlob);
