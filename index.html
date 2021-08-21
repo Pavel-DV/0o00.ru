@@ -48,7 +48,7 @@
     let $timer, $totalSum, $totalTimer, $loops;
 
     document.addEventListener('touchstart', onTouchStart);
-    document.addEventListener('touchmove', onSwipe);
+    document.addEventListener('touchmove', onSwipe, {passive: false}); // default passive
     document.addEventListener('touchend', onTouchEnd);
     window.addEventListener('resize', onResize);
     window.addEventListener('popstate', popState);
@@ -119,6 +119,7 @@
     }
 
     function onSwipe() {
+      e.preventDefault(); //  do not scroll
       isTouchingGlob = false;
     }
 
