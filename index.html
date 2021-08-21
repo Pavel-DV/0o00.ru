@@ -3,7 +3,6 @@
 <head><title>00:00</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
   <style>
@@ -48,10 +47,9 @@
     let isTouchingGlob;
     let $timer, $totalSum, $totalTimer, $loops;
 
-    document.addEventListener('touchstart', onTouchStart, {passive: true /* not call preventDefault */});
-    document.addEventListener('touchmove', onSwipe, {passive: false});
-    document.addEventListener('touchend', onTouchEnd, {passive: true /* not call preventDefault */});
-    window.addEventListener('blur', onBlur);
+    document.addEventListener('touchstart', onTouchStart, {passive: false /* default passive */});
+    document.addEventListener('touchmove', onSwipe);
+    document.addEventListener('touchend', onTouchEnd, {passive: true /* not calling preventDefault, performance */});
     window.addEventListener('resize', onResize);
     window.addEventListener('popstate', popState);
 
@@ -113,18 +111,14 @@
       update($timer, 1); //  remove update lag
     }
 
-    function onBlur() {
-      isTouchingGlob = false;
-    }
-
     function onTouchStart(e) {
-      // e.preventDefault(); //  do not select text
+      e.preventDefault(); //  do not resize
       isTouchingGlob = true;
       touchTimeGlob = new Date().getTime();
     }
 
     function onSwipe(e) {
-      e.preventDefault(); //  do not scroll
+      // e.preventDefault(); //  do not scroll
       isTouchingGlob = false;
     }
 
