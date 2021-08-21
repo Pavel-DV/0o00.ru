@@ -48,7 +48,7 @@
     let $timer, $totalSum, $totalTimer, $loops;
 
     document.addEventListener('touchstart', onTouchStart, {passive: false /* default passive */});
-    document.addEventListener('touchmove', onSwipe, {passive: false /* default passive */});
+    document.addEventListener('touchmove', onSwipe);
     document.addEventListener('touchend', onTouchEnd, {passive: true /* not calling preventDefault, performance */});
     window.addEventListener('resize', onResize);
     window.addEventListener('popstate', popState);
@@ -115,10 +115,11 @@
       e.preventDefault(); //  do not resize
       isTouchingGlob = true;
       touchTimeGlob = new Date().getTime();
+      return false; //  do not double tap
     }
 
     function onSwipe(e) {
-      e.preventDefault(); //  do not double tap
+      // e.preventDefault(); //  do not double tap. Navigation not works
       isTouchingGlob = false;
     }
 
