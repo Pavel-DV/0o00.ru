@@ -115,11 +115,10 @@
       e.preventDefault(); //  do not resize
       isTouchingGlob = true;
       touchTimeGlob = new Date().getTime();
-      return false;
     }
 
     function onSwipe(e) {
-      e.preventDefault(); //  do not scroll ??? remove
+      e.preventDefault(); //  do not double tap
       isTouchingGlob = false;
     }
 
