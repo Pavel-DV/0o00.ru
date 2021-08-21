@@ -8,11 +8,9 @@
   <style>
     html {
       background-color: black;
-      /*background-color: #171717;*/
     }
 
     body {
-      /*background-color: black;*/
       color: white;
       font-family: Calibri, "Segoe UI", sans-serif;
       margin: 0 auto;
@@ -54,8 +52,15 @@
     document.addEventListener('touchmove', onSwipe, {passive: false});
     document.addEventListener('touchend', onTouchEnd, {passive: true /* not call preventDefault */});
     window.addEventListener('blur', onBlur);
+    window.addEventListener('focus', ()=>on('focus'));
+    window.addEventListener('visibilitychange', ()=>on('vis'));
+    window.addEventListener('pageshow', ()=>on('pag'));
     window.addEventListener('resize', onResize);
     window.addEventListener('popstate', popState);
+
+    function on(text) {
+      document.body.innerHTML = text + '<br>' + document.body.innerHTML;
+    }
 
     resize();
     initVariables();
@@ -117,6 +122,7 @@
     }
 
     function onBlur() {
+      on('blu');
       isSwipingGlob = false;
       isTouchingGlob = false;
     }
