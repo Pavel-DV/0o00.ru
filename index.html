@@ -47,7 +47,7 @@
     let isTouchingGlob;
     let $timer, $totalSum, $totalTimer, $loops;
 
-    document.addEventListener('touchstart', onTouchStart, {passive: false}); // default passive
+    document.addEventListener('touchstart', onTouchStart, {passive: true}); // default passive
     document.addEventListener('touchmove', onSwipe, {passive: true}); // default passive, not calling preventDefault, performance
     document.addEventListener('touchend', onTouchEnd, {passive: false});
     window.addEventListener('resize', onResize);
