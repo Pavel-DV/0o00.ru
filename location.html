@@ -34,10 +34,13 @@ Wait
     function success(pos) {
       const crd = pos.coords;
 
-      document.writeln('<pre>Your current position is:');
-      document.writeln(`Latitude : ${crd.latitude}`);
-      document.writeln(`Longitude: ${crd.longitude}`);
-      document.writeln(`More or less ${crd.accuracy} meters.`);
+      document.writeln('<pre>');
+      for(let key in pos) {
+        document.writeln(`${key} : ${pos[key]}`);
+      }
+      for(let key in crd) {
+        document.writeln(`${key} : ${crd[key]}`);
+      }
     }
 
     function error(err) {
