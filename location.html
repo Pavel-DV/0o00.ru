@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head><title>0.00 mph</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+  <style>
+    html {
+      background-color: black;
+    }
+
+    body {
+      color: white;
+      font-family: Calibri, "Segoe UI", sans-serif;
+      margin: 0 auto;
+      width: 60vw;
+      padding: 0 5%;
+    }
+  </style>
+</head>
+<body>
+Wait
+<script>
+  "use strict";
+
+  (() => {
+    const options = {
+      enableHighAccuracy: true,
+      timeout: 5000,
+      maximumAge: 0
+    };
+
+    function success(pos) {
+      const crd = pos.coords;
+
+      document.writeln('<pre>Your current position is:');
+      document.writeln(`Latitude : ${crd.latitude}`);
+      document.writeln(`Longitude: ${crd.longitude}`);
+      document.writeln(`More or less ${crd.accuracy} meters.`);
+    }
+
+    function error(err) {
+      document.writeln(`ERROR(${err.code}): ${err.message}`);
+    }
+
+    navigator.geolocation.getCurrentPosition(success, error, options);
+  })();
+</script>
+</body>
+</html>
