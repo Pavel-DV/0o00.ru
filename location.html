@@ -17,10 +17,16 @@
       width: 60vw;
       padding: 0 5%;
     }
+
+    #timer {
+      font-size: larger;
+      line-height: normal;
+    }
   </style>
 </head>
 <body>
-Wait
+<div id="timer"></div>
+
 <script>
   "use strict";
 
@@ -31,15 +37,29 @@ Wait
       maximumAge: 0
     };
 
+    const $timer = document.getElementById('timer');
     navigator.geolocation.watchPosition(success, error, options);
+    onResize();
 
     function success(pos) {
-      document.documentElement.innerHTML = `${pos.coords.speed} m/s`;
+      const speed = pos.coords.speed;
+      const digits = 1 - Math.floor(Math.log(speed) / Math.log(10));
+      const rounded = speed?.toFixed(Math.max(0, digits));
+      $timer.innerHTML = rounded ? `${rounded} m/s` : 'Waiting data';
     }
 
     function error(err) {
       document.documentElement.innerHTML = `ERROR(${err.code}): ${err.message}`;
     }
+
+    window.addEventListener('resize', onResize);
+
+    function onResize() {
+      document.body.style.height = window.innerHeight + 'px';
+      document.body.style.fontSize = window.innerHeight * .12 + 'px';
+      document.body.style.lineHeight = window.innerHeight * .12 + 'px';
+    }
+
   })();
 </script>
 </body>
