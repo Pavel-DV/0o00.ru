@@ -25,36 +25,21 @@ Wait
   "use strict";
 
   (() => {
-
-
-
     const options = {
       enableHighAccuracy: true,
       timeout: 5000,
       maximumAge: 0
     };
 
-    const watchId = navigator.geolocation.watchPosition(success, error, options);
+    navigator.geolocation.watchPosition(success, error, options);
 
     function success(pos) {
-      const crd = pos.coords;
-
-      document.writeln('<pre>');
-      for(let key in pos) {
-        document.writeln(`${key} : ${pos[key]}`);
-      }
-      for(let key in crd) {
-        document.writeln(`${key} : ${crd[key]}`);
-      }
-
-      // navigator.geolocation.clearWatch(watchId);
+      document.documentElement.innerHTML = `${pos.coords.speed} m/s`;
     }
 
     function error(err) {
-      document.writeln(`ERROR(${err.code}): ${err.message}`);
+      document.documentElement.innerHTML = `ERROR(${err.code}): ${err.message}`;
     }
-
-    // navigator.geolocation.getCurrentPosition(success, error, options);
   })();
 </script>
 </body>
