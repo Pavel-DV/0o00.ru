@@ -53,13 +53,24 @@
     }
 
     window.addEventListener('resize', onResize);
+    document.addEventListener('touchmove', onSwipe, {passive: false}); // default passive
 
     function onResize() {
+      resize();
+
+      // Additional timeOut for iPhone Plus in landscape with multiple tabs opened
+      setTimeout(resize, 400);
+    }
+
+    function resize() {
       document.body.style.height = window.innerHeight + 'px';
       document.body.style.fontSize = window.innerHeight * .12 + 'px';
       document.body.style.lineHeight = window.innerHeight * .12 + 'px';
     }
 
+    function onSwipe(e) {
+      e.preventDefault(); //  do not scroll
+    }
   })();
 </script>
 </body>

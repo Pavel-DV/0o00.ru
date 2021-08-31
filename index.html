@@ -43,6 +43,7 @@
 
   (() => {
     const maxLoops = 4;
+
     let touchTimeGlob;
     let isTouchingGlob;
     let $timer, $totalSum, $totalTimer, $loops;
@@ -68,9 +69,9 @@
 
     function onResize() {
       resize();
-      //
-      // // Additional timeOut for iPhone Plus in landscape with multiple tabs opened
-      // setTimeout(resize, 400);
+
+      // Additional timeOut for iPhone Plus in landscape with multiple tabs opened
+      setTimeout(resize, 400);
     }
 
     function resize() {
